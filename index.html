@@ -1,0 +1,303 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jayshri Nayke | React Profile Card</title>
+
+  <!-- React libraries -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    .page {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: linear-gradient(135deg, #a78bfa, #f472b6, #fb923c);
+      transition: background 0.3s;
+    }
+
+    .page.dark {
+      background: #111827;
+    }
+
+    .theme-button {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 48px;
+      height: 48px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      font-size: 23px;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    .card {
+      width: 100%;
+      max-width: 420px;
+      padding: 32px;
+      text-align: center;
+      color: #111827;
+      background: rgba(255,255,255,0.22);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.4);
+      border-radius: 24px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.18);
+    }
+
+    .dark .card {
+      color: white;
+      background: rgba(255,255,255,0.08);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* Round initials avatar */
+    .avatar {
+      width: 128px;
+      height: 128px;
+      margin: 0 auto 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 4px solid white;
+      border-radius: 50%;
+      background: #e9d5ff;
+      color: #6b21a8;
+      font-size: 36px;
+      font-weight: bold;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 30px;
+    }
+
+    .role {
+      margin: 0 0 20px;
+      color: #374151;
+      font-size: 16px;
+    }
+
+    .dark .role {
+      color: #d1d5db;
+    }
+
+    .bio {
+      margin-bottom: 22px;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .skills {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 9px;
+      margin-bottom: 24px;
+    }
+
+    .skill {
+      padding: 8px 13px;
+      border: 1px solid rgba(255,255,255,0.5);
+      border-radius: 30px;
+      background: rgba(255,255,255,0.4);
+      font-size: 13px;
+      font-weight: bold;
+    }
+
+    .dark .skill {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    .connect {
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 22px;
+      border: none;
+      border-radius: 12px;
+      background: #111827;
+      color: white;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .connect:hover {
+      transform: translateY(-2px);
+    }
+
+    .connect.connected {
+      background: #16a34a;
+    }
+
+    .dark .connect:not(.connected) {
+      background: white;
+      color: #111827;
+    }
+
+    .socials {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+    }
+
+    .social-link {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.4);
+      color: #111827;
+      font-weight: bold;
+      text-decoration: none;
+      transition: transform 0.2s;
+    }
+
+    .social-link:hover {
+      transform: scale(1.1);
+    }
+
+    .dark .social-link {
+      background: rgba(255,255,255,0.12);
+      color: white;
+    }
+
+    .footer {
+      margin: 24px 0 0;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255,255,255,0.35);
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        padding: 25px 20px;
+      }
+
+      h1 {
+        font-size: 26px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script>
+    // Check that React libraries have loaded
+    if (typeof React !== "undefined" &&
+        typeof ReactDOM !== "undefined") {
+
+      const h = React.createElement;
+
+      // React component receives data through props
+      function ProfileCard({ name, role, bio, skills }) {
+        const [isDark, setIsDark] = React.useState(false);
+        const [isConnected, setIsConnected] = React.useState(false);
+
+        return h("div",
+          { className: isDark ? "page dark" : "page" },
+
+          // Dark and light mode toggle
+          h("button", {
+            className: "theme-button",
+            onClick: () => setIsDark(!isDark),
+            "aria-label": "Toggle dark mode",
+            title: "Toggle theme"
+          }, isDark ? "☀️" : "🌙"),
+
+          h("div", { className: "card" },
+
+            // Initials inside a perfect circle; no photo needed
+            h("div", { className: "avatar", "aria-label": "JN initials" }, "JN"),
+
+            h("h1", null, name),
+            h("p", { className: "role" }, role),
+            h("p", { className: "bio" }, bio),
+
+            h("div", { className: "skills" },
+              ...skills.map(skill =>
+                h("span", { className: "skill", key: skill }, skill)
+              )
+            ),
+
+            // Interactive Connect button
+            h("button", {
+              className: isConnected ? "connect connected" : "connect",
+              onClick: () => setIsConnected(!isConnected)
+            }, isConnected ? "✓ Connected" : "Connect"),
+
+            h("div", { className: "socials" },
+
+              h("a", {
+                className: "social-link",
+                href: "https://github.com/jayshrinayke-oss",
+                target: "_blank",
+                rel: "noopener noreferrer",
+                "aria-label": "GitHub"
+              }, "GH"),
+
+              h("a", {
+                className: "social-link",
+                href: "https://www.linkedin.com/in/jayshri-nayke-965891376/",
+                target: "_blank",
+                rel: "noopener noreferrer",
+                "aria-label": "LinkedIn"
+              }, "in")
+            ),
+
+            h("p", { className: "footer" },
+              "Built with React 18 · ApnoAI Task 2"
+            )
+          )
+        );
+      }
+
+      const root = ReactDOM.createRoot(
+        document.getElementById("root")
+      );
+
+      // Profile details passed as props
+      root.render(
+        h(ProfileCard, {
+          name: "Jayshri Nayke",
+          role: "B.Tech CSE Student | Web Developer",
+          bio: "I am a B.Tech CSE student interested in web development. I am learning to build responsive websites and improve my programming skills.",
+          skills: ["HTML", "CSS", "JavaScript", "GitHub"]
+        })
+      );
+
+    } else {
+      document.getElementById("root").innerHTML =
+        '<p style="padding:30px;font-family:Arial">React load nahi hua. Internet connection check karke page refresh karo.</p>';
+    }
+  </script>
+</body>
+</html>
+
+
+
